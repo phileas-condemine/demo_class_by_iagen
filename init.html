@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Envoi de Mail</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Envoyer un Mail</h1>
+        <form id="mailForm">
+            <label for="mail_header">Objet du Mail:</label>
+            <input type="text" id="mail_header" name="mail_header" required>
+            
+            <label for="mail_body">Corps du Mail:</label>
+            <textarea id="mail_body" name="mail_body" rows="10" required></textarea>
+            
+            <button type="submit">Envoyer</button>
+        </form>
+        <div id="response"></div>
+    </div>
+
+    <script>
+        document.getElementById('mailForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const mailHeader = document.getElementById('mail_header').value;
+            const mailBody = document.getElementById('mail_body').value;
+            
+            try {
+                const response = await fetch('https://func-recgiga0a-melusine-dev-001.azurewebsites.net/api/classification/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        mail_header: mailHeader,
+                        mail_body: mailBody
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                const result = await response.json();
+                document.getElementById('response').innerText = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('response').innerText = 'Erreur: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>
