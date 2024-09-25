@@ -80,11 +80,15 @@
                     body: JSON.stringify({
                         mail_header: mailHeader,
                         mail_body: mailBody
-                    }),
-                    mode: 'no-cors'
+                    })
                 });
                 
-                document.getElementById('response').innerText = 'Requête envoyée, mais la réponse ne peut pas être lue en raison de la politique CORS.';
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                const result = await response.json();
+                document.getElementById('response').innerText = JSON.stringify(result, null, 2);
             } catch (error) {
                 document.getElementById('response').innerText = 'Erreur: ' + error.message;
             }
